@@ -24,7 +24,7 @@ cd C:\PrismAtomsSlave
 $env:PRISM_BROKER = "<broker-host>"          # add  $env:PRISM_BROKER_PORT = "<port>"  if not 1883
 .\prism-atoms-slave.exe <room-code> --probe-only
 ```
-`<room-code>` is printed by the master on a log line `[atoms slave] room XXXX` once the owner switches the atoms split on. `--probe-only` joins, measures this machine (ms per atom-step, max atoms by VRAM, link speed), reports it to the master and exits. Copy its output into your report.
+`<room-code>` is the room name chosen on the master (it defaults to `1234`; the master shows it in the Model tab). The slave can be started BEFORE the master: it prints `waiting for room <code>` and retries every 5 seconds until the master opens the room, and goes back to waiting if the master stops. Only Ctrl+C ends it.
 
 Then the real run (leave the window open):
 ```powershell
@@ -37,8 +37,7 @@ Stop with Ctrl+C once; it finishes the step and sends its atoms home. Never kill
 ## Options
 `--max-atoms N` cap atoms on this machine (use if VRAM runs out), `--quiet` fewer lines, `--cpu` smoke test with no GPU (never for real runs). `--wire f16` is refused on purpose until the owner approves it.
 
-## Exit codes
-0 normal. 1 cannot run (message printed). 2 bad arguments or no `PRISM_BROKER` set. 3 no CUDA GPU found.
+## Exit codes`n0 normal (Ctrl+C). 1 cannot run (message printed). 2 bad arguments or no `PRISM_BROKER` set. 3 no CUDA GPU found.
 
 ## Report back (short)
 1. `nvidia-smi` card name and VRAM, driver version.
