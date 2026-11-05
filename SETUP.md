@@ -5,7 +5,7 @@ This page is for whoever (or whichever agent) sets up the SLAVE laptop. The mast
 ## What this machine needs
 - Windows with an NVIDIA GPU and a current NVIDIA driver (`nvidia-smi` must print the card). No .NET install needed, the zip is self-contained.
 - Mains power, sleep and hibernate off while it runs (`powercfg /change standby-timeout-ac 0`, `powercfg /hibernate off` is NOT needed, only the standby timeout). Restore the old values afterwards and tell the owner what you changed.
-- A network path to the MQTT broker (Mosquitto) the owner already runs. Ask for its host and port; never guess one and never use any internet default.
+- A network path to the MQTT broker (Mosquitto) the owner already runs. The default broker is built in. If the owner runs another one, ask for its host and port and pass it with `--broker` (or set `PRISM_BROKER`).
 
 ## Get the program
 Download `PrismAtomsSlave-win-x64.zip` from the Releases page of this repository and unzip it to `C:\PrismAtomsSlave\`. Do not edit its files. Do not build from source (there is none here).
@@ -21,7 +21,7 @@ The messages are large (about 36 MiB per direction per step at 48 atoms, split i
 ## Probe, then run
 ```powershell
 cd C:\PrismAtomsSlave
-$env:PRISM_BROKER = "<broker-host>"          # add  $env:PRISM_BROKER_PORT = "<port>"  if not 1883
+# the default broker is built in; for another one add  --broker <host>[:port]  (or set $env:PRISM_BROKER)
 .\prism-atoms-slave.exe <room-code> --probe-only
 ```
 `<room-code>` is the room name chosen on the master (it defaults to `1234`; the master shows it in the Model tab). The slave can be started BEFORE the master: it prints `waiting for room <code>` and retries every 5 seconds until the master opens the room, and goes back to waiting if the master stops. Only Ctrl+C ends it.
@@ -37,7 +37,7 @@ Stop with Ctrl+C once; it finishes the step and sends its atoms home. Never kill
 ## Options
 `--max-atoms N` cap atoms on this machine (use if VRAM runs out), `--quiet` fewer lines, `--cpu` smoke test with no GPU (never for real runs). `--wire f16` is refused on purpose until the owner approves it.
 
-## Exit codes`n0 normal (Ctrl+C). 1 cannot run (message printed). 2 bad arguments or no `PRISM_BROKER` set. 3 no CUDA GPU found.
+## Exit codes`n0 normal (Ctrl+C). 1 cannot run (message printed). 2 bad arguments. 3 no CUDA GPU found.
 
 ## Report back (short)
 1. `nvidia-smi` card name and VRAM, driver version.
